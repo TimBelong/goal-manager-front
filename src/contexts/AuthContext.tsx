@@ -22,16 +22,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return savedUser ? JSON.parse(savedUser) : null;
   });
   const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem(TOKEN_KEY);
+    const savedToken = localStorage.getItem(TOKEN_KEY);
+    // Set token synchronously to avoid race condition
+    if (savedToken) {
+      api.setToken(savedToken);
+    }
+    return savedToken;
   });
   const [isLoading, setIsLoading] = useState(true);
-
-  // Initialize API with saved token
-  useEffect(() => {
-    if (token) {
-      api.setToken(token);
-    }
-  }, [token]);
 
   // Validate token on mount
   useEffect(() => {
