@@ -57,6 +57,7 @@ export function GoalForm({ onSubmit, onCancel, availableYears }: GoalFormProps) 
           value={year.toString()}
           onChange={(e) => setYear(Number(e.target.value))}
           options={allYears.map((y) => ({ value: y.toString(), label: y.toString() }))}
+          style={{ marginTop: '1rem' }}
         />
 
         <div className={styles.typeSelector}>
