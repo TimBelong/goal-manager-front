@@ -1,0 +1,149 @@
+.container {
+  padding: 1.5rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--bg-glass-border);
+  border-radius: var(--radius-xl);
+  animation: fadeIn 0.4s ease forwards;
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.item {
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  animation: slideIn 0.3s ease forwards;
+  opacity: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.625rem;
+}
+
+.goalTitle {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+}
+
+.tasks {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  background: var(--accent-gradient);
+}
+
+.progressFill.complete {
+  background: var(--success);
+}
+
+.progressFill.good {
+  background: linear-gradient(135deg, #10b981, #34d399);
+}
+
+.progressFill.warning {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+
+.progressFill.danger {
+  background: linear-gradient(135deg, #ef4444, #f87171);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.type {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.percentage {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.percentage.complete {
+  color: var(--success);
+}
+
+.percentage.good {
+  color: #10b981;
+}
+
+.percentage.warning {
+  color: #f59e0b;
+}
+
+.percentage.danger {
+  color: #ef4444;
+}
+
+.empty {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg-glass);
+  border: 1px solid var(--bg-glass-border);
+  border-radius: var(--radius-xl);
+}
+

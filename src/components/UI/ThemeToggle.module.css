@@ -1,0 +1,50 @@
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.toggle:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.iconWrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.icon {
+  position: absolute;
+  inset: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--text-muted);
+  transition: all var(--transition-normal);
+  transform: scale(0.5) rotate(-30deg);
+  opacity: 0;
+}
+
+.icon.active {
+  color: var(--accent-primary);
+  transform: scale(1) rotate(0deg);
+  opacity: 1;
+}
+
+.sun.active {
+  color: #f59e0b;
+}
+
+.moon.active {
+  color: var(--accent-secondary);
+}
+
