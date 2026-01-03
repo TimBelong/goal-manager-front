@@ -12,6 +12,10 @@
   box-shadow: var(--shadow-md);
 }
 
+.header img{
+  margin-top: .5rem;
+}
+
 .left {
   display: flex;
   align-items: center;
