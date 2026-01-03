@@ -46,7 +46,7 @@ export function RegisterPage({ onSwitchToLogin }: Props) {
         <div className={styles.header}>
           <h1 className={styles.title}>
             <span className={styles.icon}>🎯</span>
-            TaskManager
+            Goals Track
           </h1>
           <p className={styles.subtitle}>Создайте новый аккаунт</p>
         </div>

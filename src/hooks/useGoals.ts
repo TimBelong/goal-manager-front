@@ -48,6 +48,19 @@ export function useGoals() {
     }
   }, []);
 
+  const updateGoal = useCallback(async (goalId: string, title: string, description: string) => {
+    try {
+      const updatedGoal = await api.updateGoal(goalId, title, description);
+      setGoals((prev) =>
+        prev.map((g) => (g.id === goalId ? updatedGoal : g))
+      );
+      return updatedGoal;
+    } catch (error) {
+      console.error('Failed to update goal:', error);
+      throw error;
+    }
+  }, []);
+
   const deleteGoal = useCallback(async (goalId: string) => {
     try {
       await api.deleteGoal(goalId);
@@ -305,6 +318,7 @@ export function useGoals() {
     goalsByYear,
     isLoading,
     addGoal,
+    updateGoal,
     deleteGoal,
     addMonth,
     deleteMonth,

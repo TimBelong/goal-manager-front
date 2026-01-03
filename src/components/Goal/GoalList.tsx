@@ -9,6 +9,7 @@ interface GoalListProps {
   years: number[];
   getProgress: (goal: Goal) => number;
   onDeleteGoal: (goalId: string) => void;
+  onEditGoal: (goal: Goal) => void;
   onAddMonth: (goalId: string, monthName: string, monthOrder: number) => void;
   onDeleteMonth: (goalId: string, monthId: string) => void;
   onAddTask: (goalId: string, monthId: string, text: string) => void;
@@ -25,6 +26,7 @@ export function GoalList({
   years,
   getProgress,
   onDeleteGoal,
+  onEditGoal,
   onAddMonth,
   onDeleteMonth,
   onAddTask,
@@ -45,6 +47,7 @@ export function GoalList({
           goals={[]}
           getProgress={getProgress}
           onDeleteGoal={onDeleteGoal}
+          onEditGoal={onEditGoal}
           onAddMonth={onAddMonth}
           onDeleteMonth={onDeleteMonth}
           onAddTask={onAddTask}
@@ -67,6 +70,7 @@ export function GoalList({
           goals={goalsByYear[year] || []}
           getProgress={getProgress}
           onDeleteGoal={onDeleteGoal}
+          onEditGoal={onEditGoal}
           onAddMonth={onAddMonth}
           onDeleteMonth={onDeleteMonth}
           onAddTask={onAddTask}

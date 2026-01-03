@@ -9,6 +9,7 @@ interface YearSectionProps {
   goals: Goal[];
   getProgress: (goal: Goal) => number;
   onDeleteGoal: (goalId: string) => void;
+  onEditGoal: (goal: Goal) => void;
   onAddMonth: (goalId: string, monthName: string, monthOrder: number) => void;
   onDeleteMonth: (goalId: string, monthId: string) => void;
   onAddTask: (goalId: string, monthId: string, text: string) => void;
@@ -24,6 +25,7 @@ export function YearSection({
   goals,
   getProgress,
   onDeleteGoal,
+  onEditGoal,
   onAddMonth,
   onDeleteMonth,
   onAddTask,
@@ -87,6 +89,7 @@ export function YearSection({
                     goal={goal}
                     progress={getProgress(goal)}
                     onDelete={onDeleteGoal}
+                    onEdit={onEditGoal}
                     onAddMonth={onAddMonth}
                     onDeleteMonth={onDeleteMonth}
                     onAddTask={onAddTask}

@@ -77,6 +77,14 @@ class ApiService {
     return mapGoalFromApi(response);
   }
 
+  async updateGoal(goalId: string, title: string, description: string): Promise<Goal> {
+    const response = await this.request<GoalApiResponse>(`/goals/${goalId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ title, description }),
+    });
+    return mapGoalFromApi(response);
+  }
+
   async deleteGoal(goalId: string): Promise<void> {
     await this.request(`/goals/${goalId}`, { method: 'DELETE' });
   }

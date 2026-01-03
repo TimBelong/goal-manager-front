@@ -105,6 +105,35 @@
   color: var(--success);
 }
 
+.editBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all var(--transition-fast);
+}
+
+.editBtn svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+.editBtn:hover {
+  opacity: 1;
+  background: var(--bg-tertiary);
+}
+
+.editBtn:hover svg {
+  color: var(--accent-primary);
+}
+
 .deleteBtn {
   display: flex;
   align-items: center;

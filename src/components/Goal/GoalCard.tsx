@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Input, Select, ConfirmModal } from '../UI';
 import { MonthCard } from '../Plan';
 import { SubGoalItem } from '../SubGoal';
@@ -6,10 +6,21 @@ import type { Goal } from '../../types';
 import { MONTHS_LIST } from '../../types';
 import styles from './GoalCard.module.css';
 
+// Helper to get/set expanded state in localStorage
+const getExpandedState = (goalId: string): boolean => {
+  const stored = localStorage.getItem(`goal-expanded-${goalId}`);
+  return stored === 'true'; // Default to false (collapsed)
+};
+
+const setExpandedState = (goalId: string, isExpanded: boolean) => {
+  localStorage.setItem(`goal-expanded-${goalId}`, String(isExpanded));
+};
+
 interface GoalCardProps {
   goal: Goal;
   progress: number;
   onDelete: (goalId: string) => void;
+  onEdit: (goal: Goal) => void;
   onAddMonth: (goalId: string, monthName: string, monthOrder: number) => void;
   onDeleteMonth: (goalId: string, monthId: string) => void;
   onAddTask: (goalId: string, monthId: string, text: string) => void;
@@ -24,6 +35,7 @@ export function GoalCard({
   goal,
   progress,
   onDelete,
+  onEdit,
   onAddMonth,
   onDeleteMonth,
   onAddTask,
@@ -33,7 +45,12 @@ export function GoalCard({
   onToggleSubGoal,
   onDeleteSubGoal,
 }: GoalCardProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(() => getExpandedState(goal.id));
+
+  // Save expanded state to localStorage when it changes
+  useEffect(() => {
+    setExpandedState(goal.id, isExpanded);
+  }, [goal.id, isExpanded]);
   const [showAddMonth, setShowAddMonth] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [showAddSubGoal, setShowAddSubGoal] = useState(false);
@@ -94,6 +111,16 @@ export function GoalCard({
             <span className={`${styles.badge} ${goal.type === 'plan' ? styles.badgePlan : styles.badgeSubgoals}`}>
               {goal.type === 'plan' ? 'План' : 'Подцели'}
             </span>
+            <button
+              className={styles.editBtn}
+              onClick={() => onEdit(goal)}
+              aria-label="Редактировать цель"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            </button>
             <button
               className={styles.deleteBtn}
               onClick={() => setShowDeleteConfirm(true)}

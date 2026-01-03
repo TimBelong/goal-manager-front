@@ -7,12 +7,14 @@ import { LoginPage, RegisterPage } from './pages';
 import { useGoals } from './hooks/useGoals';
 import { useTheme } from './hooks/useTheme';
 import { useAuth } from './contexts/AuthContext';
+import type { Goal } from './types';
 import './styles/globals.css';
 
 type AuthPage = 'login' | 'register';
 
 function App() {
   const [showForm, setShowForm] = useState(false);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>('goals');
   const [authPage, setAuthPage] = useState<AuthPage>('login');
   const { theme, toggleTheme } = useTheme();
@@ -23,6 +25,7 @@ function App() {
     goalsByYear,
     dailyActivity,
     addGoal,
+    updateGoal,
     deleteGoal,
     addMonth,
     deleteMonth,
@@ -38,6 +41,32 @@ function App() {
   const handleAddGoal = (title: string, description: string, type: 'plan' | 'subgoals', year: number) => {
     addGoal(title, description, type, year);
     setShowForm(false);
+  };
+
+  const handleEditGoal = (goal: Goal) => {
+    setEditingGoal(goal);
+    setShowForm(true);
+  };
+
+  const handleUpdateGoal = (title: string, description: string) => {
+    if (editingGoal) {
+      updateGoal(editingGoal.id, title, description);
+      setEditingGoal(null);
+      setShowForm(false);
+    }
+  };
+
+  const handleFormSubmit = (title: string, description: string, type: 'plan' | 'subgoals', year: number) => {
+    if (editingGoal) {
+      handleUpdateGoal(title, description);
+    } else {
+      handleAddGoal(title, description, type, year);
+    }
+  };
+
+  const handleFormCancel = () => {
+    setShowForm(false);
+    setEditingGoal(null);
   };
 
   // Show loading state
@@ -80,6 +109,7 @@ function App() {
             years={years}
             getProgress={getProgress}
             onDeleteGoal={deleteGoal}
+            onEditGoal={handleEditGoal}
             onAddMonth={addMonth}
             onDeleteMonth={deleteMonth}
             onAddTask={addTask}
@@ -103,9 +133,10 @@ function App() {
 
       {showForm && (
         <GoalForm
-          onSubmit={handleAddGoal}
-          onCancel={() => setShowForm(false)}
+          onSubmit={handleFormSubmit}
+          onCancel={handleFormCancel}
           availableYears={years}
+          editingGoal={editingGoal}
         />
       )}
     </div>
