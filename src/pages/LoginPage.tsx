@@ -31,7 +31,7 @@ export function LoginPage({ onSwitchToRegister }: Props) {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-        <img src="/arrow.png" alt="Arrow" width={40} height={40} />
+        <img src="/arrow.webp" alt="Arrow" width={40} height={40} />
           <h1 className={styles.title}>Goals Track</h1>
         </div>
 

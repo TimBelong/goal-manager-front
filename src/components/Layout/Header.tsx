@@ -27,7 +27,7 @@ export function Header({
     <header className={styles.header}>
       <div className={styles.left}>
         <h1 className={styles.title}>
-          <span><img src="/arrow.png" alt="Arrow" width={40} height={40} /></span>
+          <span><img src="/arrow.webp" alt="Arrow" width={40} height={40} /></span>
           Goals Track
         </h1>
         <Navigation currentPage={currentPage} onPageChange={onPageChange} />
