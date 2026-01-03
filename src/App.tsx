@@ -3,14 +3,20 @@ import { Header } from './components/Layout';
 import type { Page } from './components/Layout';
 import { GoalForm, GoalList } from './components/Goal';
 import { AnalyticsPage } from './components/Analytics';
+import { LoginPage, RegisterPage } from './pages';
 import { useGoals } from './hooks/useGoals';
 import { useTheme } from './hooks/useTheme';
+import { useAuth } from './contexts/AuthContext';
 import './styles/globals.css';
+
+type AuthPage = 'login' | 'register';
 
 function App() {
   const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>('goals');
+  const [authPage, setAuthPage] = useState<AuthPage>('login');
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated, isLoading, user, logout } = useAuth();
   const {
     goals,
     years,
@@ -34,6 +40,26 @@ function App() {
     setShowForm(false);
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="app" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎯</div>
+          <div>Загрузка...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show auth pages if not authenticated
+  if (!isAuthenticated) {
+    if (authPage === 'login') {
+      return <LoginPage onSwitchToRegister={() => setAuthPage('register')} />;
+    }
+    return <RegisterPage onSwitchToLogin={() => setAuthPage('login')} />;
+  }
+
   return (
     <div className="app">
       <Header
@@ -42,6 +68,8 @@ function App() {
         onAddGoal={() => setShowForm(true)}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
+        userName={user?.name}
+        onLogout={logout}
       />
 
       <main>

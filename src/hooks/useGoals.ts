@@ -1,236 +1,266 @@
-import { useCallback, useMemo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { useLocalStorage } from './useLocalStorage';
-import type { Goal, GoalType, Month, Task, SubGoal, DailyActivity } from '../types';
+import { useCallback, useMemo, useState, useEffect } from 'react';
+import { api, type AnalyticsData } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+import type { Goal, GoalType, DailyActivity } from '../types';
 import { getCurrentYear } from '../types';
 
 export function useGoals() {
-  const [goals, setGoals] = useLocalStorage<Goal[]>('goals', []);
-  const [dailyActivity, setDailyActivity] = useLocalStorage<DailyActivity[]>('dailyActivity', []);
+  const { isAuthenticated } = useAuth();
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [dailyActivity, setDailyActivity] = useState<DailyActivity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const addGoal = useCallback((title: string, description: string, type: GoalType, year?: number) => {
-    const newGoal: Goal = {
-      id: uuidv4(),
-      title,
-      description,
-      type,
-      createdAt: new Date().toISOString(),
-      year: year ?? getCurrentYear(),
-      ...(type === 'plan' ? { plan: { id: uuidv4(), months: [] } } : { subGoals: [] }),
-    };
-    setGoals((prev) => [...prev, newGoal]);
-    return newGoal;
-  }, [setGoals]);
+  // Fetch goals and activity on mount
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setGoals([]);
+      setDailyActivity([]);
+      setIsLoading(false);
+      return;
+    }
 
-  const deleteGoal = useCallback((goalId: string) => {
-    setGoals((prev) => prev.filter((g) => g.id !== goalId));
-  }, [setGoals]);
-
-  const addMonth = useCallback((goalId: string, monthName: string, monthOrder: number) => {
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id === goalId && goal.plan) {
-          const exists = goal.plan.months.some((m) => m.name === monthName);
-          if (exists) return goal;
-          
-          const newMonth: Month = {
-            id: uuidv4(),
-            name: monthName,
-            order: monthOrder,
-            tasks: [],
-          };
-          return {
-            ...goal,
-            plan: {
-              ...goal.plan,
-              months: [...goal.plan.months, newMonth].sort((a, b) => a.order - b.order),
-            },
-          };
-        }
-        return goal;
-      })
-    );
-  }, [setGoals]);
-
-  const deleteMonth = useCallback((goalId: string, monthId: string) => {
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id === goalId && goal.plan) {
-          return {
-            ...goal,
-            plan: {
-              ...goal.plan,
-              months: goal.plan.months.filter((m) => m.id !== monthId),
-            },
-          };
-        }
-        return goal;
-      })
-    );
-  }, [setGoals]);
-
-  const addTask = useCallback((goalId: string, monthId: string, text: string) => {
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id === goalId && goal.plan) {
-          return {
-            ...goal,
-            plan: {
-              ...goal.plan,
-              months: goal.plan.months.map((month) => {
-                if (month.id === monthId) {
-                  const newTask: Task = {
-                    id: uuidv4(),
-                    text,
-                    completed: false,
-                  };
-                  return { ...month, tasks: [...month.tasks, newTask] };
-                }
-                return month;
-              }),
-            },
-          };
-        }
-        return goal;
-      })
-    );
-  }, [setGoals]);
-
-  const recordActivity = useCallback((date: string) => {
-    setDailyActivity((prev) => {
-      const existing = prev.find((a) => a.date === date);
-      if (existing) {
-        return prev.map((a) =>
-          a.date === date ? { ...a, tasksCompleted: a.tasksCompleted + 1 } : a
-        );
+    const fetchData = async () => {
+      try {
+        const [goalsData, analyticsData] = await Promise.all([
+          api.getGoals(),
+          api.getAnalytics(),
+        ]);
+        setGoals(goalsData);
+        setDailyActivity(analyticsData.activity);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      } finally {
+        setIsLoading(false);
       }
-      return [...prev, { date, tasksCompleted: 1 }];
-    });
-  }, [setDailyActivity]);
+    };
 
-  const toggleTask = useCallback((goalId: string, monthId: string, taskId: string) => {
-    const today = new Date().toISOString().split('T')[0];
-    
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id === goalId && goal.plan) {
-          return {
-            ...goal,
-            plan: {
-              ...goal.plan,
-              months: goal.plan.months.map((month) => {
-                if (month.id === monthId) {
-                  return {
-                    ...month,
-                    tasks: month.tasks.map((task) => {
-                      if (task.id === taskId) {
-                        const newCompleted = !task.completed;
-                        if (newCompleted) {
-                          recordActivity(today);
-                        }
-                        return {
-                          ...task,
-                          completed: newCompleted,
-                          completedAt: newCompleted ? today : undefined,
-                        };
-                      }
-                      return task;
-                    }),
-                  };
-                }
-                return month;
-              }),
-            },
-          };
-        }
-        return goal;
-      })
-    );
-  }, [setGoals, recordActivity]);
+    fetchData();
+  }, [isAuthenticated]);
 
-  const deleteTask = useCallback((goalId: string, monthId: string, taskId: string) => {
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id === goalId && goal.plan) {
-          return {
-            ...goal,
-            plan: {
-              ...goal.plan,
-              months: goal.plan.months.map((month) => {
-                if (month.id === monthId) {
-                  return {
-                    ...month,
-                    tasks: month.tasks.filter((t) => t.id !== taskId),
-                  };
-                }
-                return month;
-              }),
-            },
-          };
-        }
-        return goal;
-      })
-    );
-  }, [setGoals]);
+  const addGoal = useCallback(async (title: string, description: string, type: GoalType, year?: number) => {
+    try {
+      const newGoal = await api.createGoal(title, description, type, year);
+      setGoals((prev) => [newGoal, ...prev]);
+      return newGoal;
+    } catch (error) {
+      console.error('Failed to add goal:', error);
+      throw error;
+    }
+  }, []);
 
-  const addSubGoal = useCallback((goalId: string, text: string) => {
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id === goalId && goal.subGoals) {
-          const newSubGoal: SubGoal = {
-            id: uuidv4(),
-            text,
-            completed: false,
-          };
-          return { ...goal, subGoals: [...goal.subGoals, newSubGoal] };
-        }
-        return goal;
-      })
-    );
-  }, [setGoals]);
+  const deleteGoal = useCallback(async (goalId: string) => {
+    try {
+      await api.deleteGoal(goalId);
+      setGoals((prev) => prev.filter((g) => g.id !== goalId));
+    } catch (error) {
+      console.error('Failed to delete goal:', error);
+      throw error;
+    }
+  }, []);
 
-  const toggleSubGoal = useCallback((goalId: string, subGoalId: string) => {
-    const today = new Date().toISOString().split('T')[0];
-    
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id === goalId && goal.subGoals) {
-          return {
-            ...goal,
-            subGoals: goal.subGoals.map((sg) => {
-              if (sg.id === subGoalId) {
-                const newCompleted = !sg.completed;
-                if (newCompleted) {
-                  recordActivity(today);
-                }
-                return {
-                  ...sg,
-                  completed: newCompleted,
-                  completedAt: newCompleted ? today : undefined,
-                };
-              }
-              return sg;
-            }),
-          };
-        }
-        return goal;
-      })
-    );
-  }, [setGoals, recordActivity]);
+  const addMonth = useCallback(async (goalId: string, monthName: string, monthOrder: number) => {
+    try {
+      const newMonth = await api.addMonth(goalId, monthName, monthOrder);
+      setGoals((prev) =>
+        prev.map((goal) => {
+          if (goal.id === goalId && goal.plan) {
+            return {
+              ...goal,
+              plan: {
+                ...goal.plan,
+                months: [...goal.plan.months, newMonth].sort((a, b) => a.order - b.order),
+              },
+            };
+          }
+          return goal;
+        })
+      );
+    } catch (error) {
+      console.error('Failed to add month:', error);
+      throw error;
+    }
+  }, []);
 
-  const deleteSubGoal = useCallback((goalId: string, subGoalId: string) => {
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id === goalId && goal.subGoals) {
-          return {
-            ...goal,
-            subGoals: goal.subGoals.filter((sg) => sg.id !== subGoalId),
-          };
-        }
-        return goal;
-      })
-    );
-  }, [setGoals]);
+  const deleteMonth = useCallback(async (goalId: string, monthId: string) => {
+    try {
+      await api.deleteMonth(goalId, monthId);
+      setGoals((prev) =>
+        prev.map((goal) => {
+          if (goal.id === goalId && goal.plan) {
+            return {
+              ...goal,
+              plan: {
+                ...goal.plan,
+                months: goal.plan.months.filter((m) => m.id !== monthId),
+              },
+            };
+          }
+          return goal;
+        })
+      );
+    } catch (error) {
+      console.error('Failed to delete month:', error);
+      throw error;
+    }
+  }, []);
+
+  const addTask = useCallback(async (goalId: string, monthId: string, text: string) => {
+    try {
+      const newTask = await api.addTask(goalId, monthId, text);
+      setGoals((prev) =>
+        prev.map((goal) => {
+          if (goal.id === goalId && goal.plan) {
+            return {
+              ...goal,
+              plan: {
+                ...goal.plan,
+                months: goal.plan.months.map((month) => {
+                  if (month.id === monthId) {
+                    return { ...month, tasks: [...month.tasks, newTask] };
+                  }
+                  return month;
+                }),
+              },
+            };
+          }
+          return goal;
+        })
+      );
+    } catch (error) {
+      console.error('Failed to add task:', error);
+      throw error;
+    }
+  }, []);
+
+  const toggleTask = useCallback(async (goalId: string, _monthId: string, taskId: string) => {
+    try {
+      const updatedTask = await api.toggleTask(goalId, taskId);
+      setGoals((prev) =>
+        prev.map((goal) => {
+          if (goal.id === goalId && goal.plan) {
+            return {
+              ...goal,
+              plan: {
+                ...goal.plan,
+                months: goal.plan.months.map((month) => ({
+                  ...month,
+                  tasks: month.tasks.map((task) =>
+                    task.id === taskId ? updatedTask : task
+                  ),
+                })),
+              },
+            };
+          }
+          return goal;
+        })
+      );
+
+      // Refresh activity data after toggle
+      if (updatedTask.completed) {
+        const analytics = await api.getAnalytics();
+        setDailyActivity(analytics.activity);
+      }
+    } catch (error) {
+      console.error('Failed to toggle task:', error);
+      throw error;
+    }
+  }, []);
+
+  const deleteTask = useCallback(async (goalId: string, monthId: string, taskId: string) => {
+    try {
+      await api.deleteTask(goalId, monthId, taskId);
+      setGoals((prev) =>
+        prev.map((goal) => {
+          if (goal.id === goalId && goal.plan) {
+            return {
+              ...goal,
+              plan: {
+                ...goal.plan,
+                months: goal.plan.months.map((month) => {
+                  if (month.id === monthId) {
+                    return {
+                      ...month,
+                      tasks: month.tasks.filter((t) => t.id !== taskId),
+                    };
+                  }
+                  return month;
+                }),
+              },
+            };
+          }
+          return goal;
+        })
+      );
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      throw error;
+    }
+  }, []);
+
+  const addSubGoal = useCallback(async (goalId: string, text: string) => {
+    try {
+      const newSubGoal = await api.addSubGoal(goalId, text);
+      setGoals((prev) =>
+        prev.map((goal) => {
+          if (goal.id === goalId && goal.subGoals) {
+            return { ...goal, subGoals: [...goal.subGoals, newSubGoal] };
+          }
+          return goal;
+        })
+      );
+    } catch (error) {
+      console.error('Failed to add subgoal:', error);
+      throw error;
+    }
+  }, []);
+
+  const toggleSubGoal = useCallback(async (goalId: string, subGoalId: string) => {
+    try {
+      const updatedSubGoal = await api.toggleSubGoal(goalId, subGoalId);
+      setGoals((prev) =>
+        prev.map((goal) => {
+          if (goal.id === goalId && goal.subGoals) {
+            return {
+              ...goal,
+              subGoals: goal.subGoals.map((sg) =>
+                sg.id === subGoalId ? updatedSubGoal : sg
+              ),
+            };
+          }
+          return goal;
+        })
+      );
+
+      // Refresh activity data after toggle
+      if (updatedSubGoal.completed) {
+        const analytics = await api.getAnalytics();
+        setDailyActivity(analytics.activity);
+      }
+    } catch (error) {
+      console.error('Failed to toggle subgoal:', error);
+      throw error;
+    }
+  }, []);
+
+  const deleteSubGoal = useCallback(async (goalId: string, subGoalId: string) => {
+    try {
+      await api.deleteSubGoal(goalId, subGoalId);
+      setGoals((prev) =>
+        prev.map((goal) => {
+          if (goal.id === goalId && goal.subGoals) {
+            return {
+              ...goal,
+              subGoals: goal.subGoals.filter((sg) => sg.id !== subGoalId),
+            };
+          }
+          return goal;
+        })
+      );
+    } catch (error) {
+      console.error('Failed to delete subgoal:', error);
+      throw error;
+    }
+  }, []);
 
   const getProgress = useCallback((goal: Goal): number => {
     if (goal.type === 'plan' && goal.plan) {
@@ -250,6 +280,8 @@ export function useGoals() {
   // Get unique years from goals
   const years = useMemo(() => {
     const yearSet = new Set(goals.map((g) => g.year ?? getCurrentYear()));
+    // Always include current year
+    yearSet.add(getCurrentYear());
     return Array.from(yearSet).sort((a, b) => b - a); // descending
   }, [goals]);
 
@@ -266,17 +298,12 @@ export function useGoals() {
     return grouped;
   }, [goals]);
 
-  // Add a new year (years are derived from goals, so this is a no-op placeholder)
-  const addYear = useCallback((_year: number) => {
-    // Years are automatically derived from goals
-    // This function exists as a placeholder for future functionality
-  }, []);
-
   return {
     goals,
     dailyActivity,
     years,
     goalsByYear,
+    isLoading,
     addGoal,
     deleteGoal,
     addMonth,
@@ -288,6 +315,5 @@ export function useGoals() {
     toggleSubGoal,
     deleteSubGoal,
     getProgress,
-    addYear,
   };
 }
