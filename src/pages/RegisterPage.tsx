@@ -48,7 +48,6 @@ export function RegisterPage({ onSwitchToLogin }: Props) {
             <span className={styles.icon}>🎯</span>
             Goals Track
           </h1>
-          <p className={styles.subtitle}>Создайте новый аккаунт</p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>

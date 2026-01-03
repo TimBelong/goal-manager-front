@@ -33,7 +33,6 @@ export function LoginPage({ onSwitchToRegister }: Props) {
         <div className={styles.header}>
         <img src="/arrow.png" alt="Arrow" width={40} height={40} />
           <h1 className={styles.title}>Goals Track</h1>
-          <p className={styles.subtitle}>Войдите в свой аккаунт</p>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>

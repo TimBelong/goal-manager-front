@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import { api, type AnalyticsData } from '../services/api';
+import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import type { Goal, GoalType, DailyActivity } from '../types';
 import { getCurrentYear } from '../types';
