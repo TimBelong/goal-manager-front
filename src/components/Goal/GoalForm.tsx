@@ -41,7 +41,7 @@ export function GoalForm({ onSubmit, onCancel, availableYears }: GoalFormProps) 
           autoFocus
         />
 
-        <div className={styles.field}>
+        <div className={styles.field} style={{ marginBottom: '1rem' }}>
           <label className={styles.label}>Описание (необязательно)</label>
           <textarea
             className={styles.textarea}
@@ -57,7 +57,6 @@ export function GoalForm({ onSubmit, onCancel, availableYears }: GoalFormProps) 
           value={year.toString()}
           onChange={(e) => setYear(Number(e.target.value))}
           options={allYears.map((y) => ({ value: y.toString(), label: y.toString() }))}
-          style={{ marginTop: '1rem' }}
         />
 
         <div className={styles.typeSelector}>
