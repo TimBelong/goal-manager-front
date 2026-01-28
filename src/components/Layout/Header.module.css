@@ -107,14 +107,20 @@
   .title {
     font-size: 1.25rem;
   }
-  
+
   .userInfo {
     padding-left: 0;
     border-left: none;
   }
-  
+
   .userName {
     display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .header img {
+    width: 150px;
   }
 }
 

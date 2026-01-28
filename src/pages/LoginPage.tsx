@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../hooks/useTheme';
 import styles from './AuthPage.module.css';
 
 interface Props {
@@ -12,6 +13,7 @@ export function LoginPage({ onSwitchToRegister }: Props) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const { theme } = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +33,7 @@ export function LoginPage({ onSwitchToRegister }: Props) {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-        <img src="/arrow.webp" alt="Arrow" width={40} height={40} />
-          <h1 className={styles.title}>Goals Track</h1>
+        <img src={theme === 'dark' ? '/logo_dark.png' : '/logo-light.png'} alt="Logo" width={250} />
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
