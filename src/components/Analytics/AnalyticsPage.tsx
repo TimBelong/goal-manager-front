@@ -8,6 +8,7 @@ import { useAnalytics } from '../../hooks/useAnalytics';
 import type { Goal, DailyActivity } from '../../types';
 import { getCurrentYear } from '../../types';
 import styles from './AnalyticsPage.module.css';
+import analyticIcon from '../../assets/analitic.png';
 
 interface AnalyticsPageProps {
   goals: Goal[];
@@ -30,11 +31,7 @@ export function AnalyticsPage({
     : [{ value: getCurrentYear().toString(), label: getCurrentYear().toString() }];
 
   const chartIcon = (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '10px', verticalAlign: 'middle' }}>
-      <rect x="17" y="10" width="4" height="10" rx="1" fill="#a855f7" />
-      <rect x="10" y="4" width="4" height="16" rx="1" fill="#8b5cf6" />
-      <rect x="3" y="14" width="4" height="6" rx="1" fill="#6366f1" />
-    </svg>
+    <img src={analyticIcon} alt="Аналитика" width="40" height="40" style={{ marginRight: '10px', verticalAlign: 'middle' }} />
   );
 
   return (
