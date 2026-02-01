@@ -8,7 +8,6 @@ import { useAnalytics } from '../../hooks/useAnalytics';
 import type { Goal, DailyActivity } from '../../types';
 import { getCurrentYear } from '../../types';
 import styles from './AnalyticsPage.module.css';
-import analyticIcon from '../../assets/analitic.png';
 
 interface AnalyticsPageProps {
   goals: Goal[];
