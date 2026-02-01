@@ -16,6 +16,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -108,12 +109,26 @@
 .statInfo {
   display: flex;
   flex-direction: column;
+  gap: 0.125rem;
+}
+
+.statTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .statValue {
   font-size: 1.5rem;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.2;
+}
+
+.statSubtitle {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
 }
 
 .statLabel {
@@ -142,4 +157,3 @@
     grid-template-columns: 1fr;
   }
 }
-

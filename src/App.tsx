@@ -74,8 +74,22 @@ function App() {
     return (
       <div className="app" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <div style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎯</div>
-          <div>Загрузка...</div>
+          <img
+            src="/loader.png"
+            alt="Загрузка"
+            style={{
+              width: '64px',
+              height: '64px',
+              marginBottom: '1rem',
+              animation: 'spin 1.5s linear infinite'
+            }}
+          />
+          <style>{`
+            @keyframes spin {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+          `}</style>
         </div>
       </div>
     );

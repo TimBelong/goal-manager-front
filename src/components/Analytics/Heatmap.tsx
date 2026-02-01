@@ -23,19 +23,19 @@ export function Heatmap({ activity, year }: HeatmapProps) {
     const allDays: Date[] = [];
     const startDate = new Date(year, 0, 1);
     const endDate = new Date(year, 11, 31);
-    
+
     // Start from the Sunday of the week containing Jan 1
     const firstDayOfWeek = startDate.getDay(); // 0 = Sunday
     const adjustedStart = new Date(startDate);
     adjustedStart.setDate(adjustedStart.getDate() - firstDayOfWeek);
-    
+
     // Generate all days from adjusted start to end of year
     const current = new Date(adjustedStart);
     while (current <= endDate) {
       allDays.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }
-    
+
     // Add remaining days to complete the last week
     while (allDays.length % 7 !== 0) {
       allDays.push(new Date(current));
@@ -52,7 +52,7 @@ export function Heatmap({ activity, year }: HeatmapProps) {
     const monthLabels: { name: string; week: number }[] = [];
     const monthNames = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
     let lastMonth = -1;
-    
+
     weeksArr.forEach((week, weekIndex) => {
       // Find the first day of this week that's in the target year
       const dayInYear = week.find(d => d.getFullYear() === year);
@@ -94,10 +94,19 @@ export function Heatmap({ activity, year }: HeatmapProps) {
 
   const dayLabels = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
+  const calendarIcon = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+      <rect x="3" y="4" width="18" height="18" rx="2" stroke="#3b82f6" strokeWidth="2" fill="none" />
+      <line x1="16" y1="2" x2="16" y2="6" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
+      <line x1="8" y1="2" x2="8" y2="6" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
+      <line x1="3" y1="10" x2="21" y2="10" stroke="#3b82f6" strokeWidth="2" />
+    </svg>
+  );
+
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>📅 Активность за {year} год</h3>
-      
+      <h3 className={styles.title}>{calendarIcon}Активность за {year} год</h3>
+
       <div className={styles.heatmapWrapper}>
         <div className={styles.dayLabels}>
           {dayLabels.map((day, i) => (

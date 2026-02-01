@@ -29,10 +29,18 @@ export function AnalyticsPage({
     ? years.map((y) => ({ value: y.toString(), label: y.toString() }))
     : [{ value: getCurrentYear().toString(), label: getCurrentYear().toString() }];
 
+  const chartIcon = (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginRight: '10px', verticalAlign: 'middle' }}>
+      <rect x="17" y="10" width="4" height="10" rx="1" fill="#a855f7" />
+      <rect x="10" y="4" width="4" height="16" rx="1" fill="#8b5cf6" />
+      <rect x="3" y="14" width="4" height="6" rx="1" fill="#6366f1" />
+    </svg>
+  );
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>📊 Аналитика</h2>
+        <h2 className={styles.title}>{chartIcon}Аналитика</h2>
         <Select
           value={selectedYear.toString()}
           onChange={(e) => setSelectedYear(Number(e.target.value))}
