@@ -134,8 +134,22 @@
 }
 
 .categoryIcon {
-  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 0.5rem;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+
+.categoryCard:hover .categoryIcon,
+.categoryCard.selected .categoryIcon {
+  color: var(--accent-primary);
+}
+
+.categoryIcon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .categoryLabel {
@@ -184,16 +198,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   background: var(--bg-secondary);
   border-radius: 50%;
   color: var(--accent-primary);
 }
 
 .typeIcon svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .typeContent {
@@ -285,6 +299,49 @@
   flex: 1;
 }
 
+/* Category Select for Editing */
+.categorySelect {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.categoryOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.categoryOption:hover {
+  border-color: var(--text-muted);
+}
+
+.categoryOption.selected {
+  border-color: var(--accent-primary);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.categoryOptionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.categoryOptionIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
 @media (max-width: 600px) {
   .categoryGrid {
     grid-template-columns: 1fr;
@@ -298,5 +355,14 @@
     padding: 1.5rem;
     max-height: 100vh;
     border-radius: 0;
+  }
+
+  .categorySelect {
+    gap: 0.375rem;
+  }
+
+  .categoryOption {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8rem;
   }
 }

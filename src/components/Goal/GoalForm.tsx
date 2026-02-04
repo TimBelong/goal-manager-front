@@ -81,7 +81,7 @@ export function GoalForm({ onSubmit, onCancel, availableYears, editingGoal }: Go
                 </button>
               ))}
             </div>
-            <Button variant="ghost" className="mt-4" onClick={() => setStep('year')}>
+            <Button variant="ghost" style={{ marginTop: '10px' }} onClick={() => setStep('year')}>
               Назад
             </Button>
           </div>
@@ -123,13 +123,10 @@ export function GoalForm({ onSubmit, onCancel, availableYears, editingGoal }: Go
                 }}
               >
                 <div className={styles.typeIcon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M3 5h.01" />
-                    <path d="M3 12h.01" />
-                    <path d="M3 19h.01" />
-                    <path d="M8 5h13" />
-                    <path d="M8 12h13" />
-                    <path d="M8 19h13" />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" stroke="#a855f7" strokeWidth="2" fill="none" strokeLinejoin="round" />
+                    <polyline points="2 17 12 22 22 17" stroke="#ec4899" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline points="2 12 12 17 22 12" stroke="#a855f7" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.7" />
                   </svg>
                 </div>
                 <div className={styles.typeContent}>
@@ -138,7 +135,7 @@ export function GoalForm({ onSubmit, onCancel, availableYears, editingGoal }: Go
                 </div>
               </button>
             </div>
-            <Button variant="ghost" onClick={() => setStep('category')}>
+            <Button variant="ghost" style={{ marginTop: '10px' }} onClick={() => setStep('category')}>
               Назад
             </Button>
           </div>
@@ -168,17 +165,38 @@ export function GoalForm({ onSubmit, onCancel, availableYears, editingGoal }: Go
               />
             </div>
 
+            {isEditing && (
+              <div className={styles.field} style={{ marginBottom: '1rem' }}>
+                <label className={styles.label}>Категория</label>
+                <div className={styles.categorySelect}>
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      className={`${styles.categoryOption} ${category === cat.id ? styles.selected : ''}`}
+                      onClick={() => setCategory(cat.id)}
+                    >
+                      <span className={styles.categoryOptionIcon}>{cat.icon}</span>
+                      <span>{cat.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className={styles.summary}>
               <div className={styles.summaryItem}>
                 <span className={styles.summaryLabel}>Год:</span>
                 <span className={styles.summaryValue}>{year}</span>
               </div>
-              <div className={styles.summaryItem}>
-                <span className={styles.summaryLabel}>Категория:</span>
-                <span className={styles.summaryValue}>
-                  {CATEGORIES.find(c => c.id === category)?.label}
-                </span>
-              </div>
+              {!isEditing && (
+                <div className={styles.summaryItem}>
+                  <span className={styles.summaryLabel}>Категория:</span>
+                  <span className={styles.summaryValue}>
+                    {CATEGORIES.find(c => c.id === category)?.label}
+                  </span>
+                </div>
+              )}
               <div className={styles.summaryItem}>
                 <span className={styles.summaryLabel}>Тип:</span>
                 <span className={styles.summaryValue}>

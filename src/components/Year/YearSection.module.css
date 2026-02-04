@@ -148,10 +148,6 @@
   transition: all var(--transition-fast);
 }
 
-.categorySection:hover {
-  border-color: var(--border-hover);
-}
-
 .categoryHeader {
   display: flex;
   align-items: center;
@@ -175,7 +171,19 @@
 }
 
 .catIcon {
-  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.categoryHeader:hover .catIcon {
+  color: var(--cat-color, var(--accent-primary));
+}
+
+.catIcon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .catName {
