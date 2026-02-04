@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { GoalCard } from '../Goal/GoalCard';
 import type { Goal } from '../../types';
 import { getCurrentYear } from '../../types';
+import { CATEGORIES } from '../../constants/categories'; // Import categories
 import styles from './YearSection.module.css';
 
 interface YearSectionProps {
@@ -36,12 +37,34 @@ export function YearSection({
   onDeleteSubGoal,
 }: YearSectionProps) {
   const [isExpanded, setIsExpanded] = useState(year === getCurrentYear());
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+
+  const toggleCategory = (catId: string) => {
+    setExpandedCategories(prev => ({ ...prev, [catId]: !prev[catId] }));
+  };
 
   const totalGoals = goals.length;
   const completedGoals = goals.filter((g) => getProgress(g) === 100).length;
-  const overallProgress = totalGoals > 0 
-    ? Math.round(goals.reduce((sum, g) => sum + getProgress(g), 0) / totalGoals) 
+  const overallProgress = totalGoals > 0
+    ? Math.round(goals.reduce((sum, g) => sum + getProgress(g), 0) / totalGoals)
     : 0;
+
+  // Group goals by category
+  const groupedGoals = goals.reduce((acc, goal) => {
+    const cat = goal.category || 'Other'; // Fallback for old data
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(goal);
+    return acc;
+  }, {} as Record<string, Goal[]>);
+
+  // Filter categories that have goals
+  const activeCategories = CATEGORIES.filter(c => groupedGoals[c.id] && groupedGoals[c.id].length > 0);
+
+  // Handle 'Other' if not in constants (unlikely but safe)
+  const otherGoals = groupedGoals['Other'] || [];
+  if (otherGoals.length > 0 && !activeCategories.find(c => c.id === 'Other')) {
+    // If 'Other' is not in CATEGORIES list or just to be safe
+  }
 
   return (
     <section className={styles.section}>
@@ -82,25 +105,66 @@ export function YearSection({
               Нет целей на {year} год
             </div>
           ) : (
-            <div className={styles.goalsList}>
-              {goals.map((goal, index) => (
-                <div key={goal.id} style={{ animationDelay: `${index * 50}ms` }} className={styles.goalItem}>
-                  <GoalCard
-                    goal={goal}
-                    progress={getProgress(goal)}
-                    onDelete={onDeleteGoal}
-                    onEdit={onEditGoal}
-                    onAddMonth={onAddMonth}
-                    onDeleteMonth={onDeleteMonth}
-                    onAddTask={onAddTask}
-                    onToggleTask={onToggleTask}
-                    onDeleteTask={onDeleteTask}
-                    onAddSubGoal={onAddSubGoal}
-                    onToggleSubGoal={onToggleSubGoal}
-                    onDeleteSubGoal={onDeleteSubGoal}
-                  />
-                </div>
-              ))}
+            <div className={styles.categoriesList}>
+              {activeCategories.map((category) => {
+                const categoryGoals = groupedGoals[category.id];
+                const isCatExpanded = expandedCategories[category.id];
+                const catProgress = Math.round(categoryGoals.reduce((sum, g) => sum + getProgress(g), 0) / categoryGoals.length);
+
+                return (
+                  <div key={category.id} className={styles.categorySection}>
+                    <button
+                      className={styles.categoryHeader}
+                      onClick={() => toggleCategory(category.id)}
+                      style={{ '--cat-color': category.color } as any}
+                    >
+                      <div className={styles.catHeaderLeft}>
+                        <svg
+                          className={`${styles.chevron} ${isCatExpanded ? styles.expanded : ''}`}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                        <span className={styles.catIcon}>{category.icon}</span>
+                        <span className={styles.catName}>{category.label}</span>
+                        <span className={styles.catCount}>{categoryGoals.length}</span>
+                      </div>
+                      <div className={styles.catHeaderRight}>
+                        <div className={styles.catProgressBar}>
+                          <div className={styles.catProgressFill} style={{ width: `${catProgress}%`, backgroundColor: category.color }} />
+                        </div>
+                        <span className={styles.catProgressText}>{catProgress}%</span>
+                      </div>
+                    </button>
+
+                    {isCatExpanded && (
+                      <div className={styles.goalsList}>
+                        {categoryGoals.map((goal, index) => (
+                          <div key={goal.id} style={{ animationDelay: `${index * 50}ms` }} className={styles.goalItem}>
+                            <GoalCard
+                              goal={goal}
+                              progress={getProgress(goal)}
+                              onDelete={onDeleteGoal}
+                              onEdit={onEditGoal}
+                              onAddMonth={onAddMonth}
+                              onDeleteMonth={onDeleteMonth}
+                              onAddTask={onAddTask}
+                              onToggleTask={onToggleTask}
+                              onDeleteTask={onDeleteTask}
+                              onAddSubGoal={onAddSubGoal}
+                              onToggleSubGoal={onToggleSubGoal}
+                              onDeleteSubGoal={onDeleteSubGoal}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import type { Goal, GoalType, DailyActivity } from '../types';
+import type { Goal, GoalType, GoalCategory, DailyActivity } from '../types';
 import { getCurrentYear } from '../types';
 
 export function useGoals() {
@@ -37,9 +37,9 @@ export function useGoals() {
     fetchData();
   }, [isAuthenticated]);
 
-  const addGoal = useCallback(async (title: string, description: string, type: GoalType, year?: number) => {
+  const addGoal = useCallback(async (title: string, description: string, type: GoalType, category: GoalCategory, year?: number) => {
     try {
-      const newGoal = await api.createGoal(title, description, type, year);
+      const newGoal = await api.createGoal(title, description, type, category, year);
       setGoals((prev) => [newGoal, ...prev]);
       return newGoal;
     } catch (error) {
@@ -48,9 +48,9 @@ export function useGoals() {
     }
   }, []);
 
-  const updateGoal = useCallback(async (goalId: string, title: string, description: string) => {
+  const updateGoal = useCallback(async (goalId: string, title: string, description: string, category: GoalCategory) => {
     try {
-      const updatedGoal = await api.updateGoal(goalId, title, description);
+      const updatedGoal = await api.updateGoal(goalId, title, description, category);
       setGoals((prev) =>
         prev.map((g) => (g.id === goalId ? updatedGoal : g))
       );

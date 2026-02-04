@@ -14,6 +14,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -133,10 +134,100 @@
   font-size: 0.9375rem;
 }
 
+.categoriesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.categorySection {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+}
+
+.categorySection:hover {
+  border-color: var(--border-hover);
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.categoryHeader:hover {
+  background: var(--bg-secondary);
+}
+
+.catHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.catIcon {
+  font-size: 1.25rem;
+}
+
+.catName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.catCount {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.catHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 150px;
+  justify-content: flex-end;
+}
+
+.catProgressBar {
+  width: 80px;
+  height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.catProgressFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.catProgressText {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 32px;
+  text-align: right;
+}
+
 .goalsList {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 0 1.25rem 1.25rem;
 }
 
 .goalItem {
@@ -164,5 +255,20 @@
     flex: 1;
     max-width: 120px;
   }
-}
 
+  .categoryHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .catHeaderRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .catProgressBar {
+    flex: 1;
+    max-width: none;
+  }
+}

@@ -26,11 +26,24 @@ export interface SubGoal {
 
 export type GoalType = 'plan' | 'subgoals';
 
+export type GoalCategory =
+  | 'PersonalDevelopment'
+  | 'Career'
+  | 'Finance'
+  | 'Health'
+  | 'Sport'
+  | 'Nutrition'
+  | 'Relationships'
+  | 'Habits'
+  | 'Travel'
+  | 'Other';
+
 export interface Goal {
   id: string;
   title: string;
   description?: string;
   type: GoalType;
+  category: GoalCategory;
   plan?: Plan;
   subGoals?: SubGoal[];
   createdAt: string;

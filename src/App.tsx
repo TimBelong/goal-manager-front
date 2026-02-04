@@ -38,8 +38,8 @@ function App() {
     getProgress,
   } = useGoals();
 
-  const handleAddGoal = (title: string, description: string, type: 'plan' | 'subgoals', year: number) => {
-    addGoal(title, description, type, year);
+  const handleAddGoal = (title: string, description: string, type: 'plan' | 'subgoals', category: any, year: number) => {
+    addGoal(title, description, type, category, year);
     setShowForm(false);
   };
 
@@ -48,19 +48,19 @@ function App() {
     setShowForm(true);
   };
 
-  const handleUpdateGoal = (title: string, description: string) => {
+  const handleUpdateGoal = (title: string, description: string, category: any) => {
     if (editingGoal) {
-      updateGoal(editingGoal.id, title, description);
+      updateGoal(editingGoal.id, title, description, category);
       setEditingGoal(null);
       setShowForm(false);
     }
   };
 
-  const handleFormSubmit = (title: string, description: string, type: 'plan' | 'subgoals', year: number) => {
+  const handleFormSubmit = (title: string, description: string, type: 'plan' | 'subgoals', category: any, year: number) => {
     if (editingGoal) {
-      handleUpdateGoal(title, description);
+      handleUpdateGoal(title, description, category);
     } else {
-      handleAddGoal(title, description, type, year);
+      handleAddGoal(title, description, type, category, year);
     }
   };
 

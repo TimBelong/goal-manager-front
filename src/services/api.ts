@@ -1,4 +1,4 @@
-import type { Goal, GoalType, Month, Task, SubGoal, DailyActivity } from '../types';
+import type { Goal, GoalType, GoalCategory, Month, Task, SubGoal, DailyActivity } from '../types';
 
 const API_BASE_URL = '/api';
 
@@ -69,18 +69,18 @@ class ApiService {
     return response.map(mapGoalFromApi);
   }
 
-  async createGoal(title: string, description: string, type: GoalType, year?: number): Promise<Goal> {
+  async createGoal(title: string, description: string, type: GoalType, category: GoalCategory, year?: number): Promise<Goal> {
     const response = await this.request<GoalApiResponse>('/goals', {
       method: 'POST',
-      body: JSON.stringify({ title, description, type, year }),
+      body: JSON.stringify({ title, description, type, category, year }),
     });
     return mapGoalFromApi(response);
   }
 
-  async updateGoal(goalId: string, title: string, description: string): Promise<Goal> {
+  async updateGoal(goalId: string, title: string, description: string, category: GoalCategory): Promise<Goal> {
     const response = await this.request<GoalApiResponse>(`/goals/${goalId}`, {
       method: 'PUT',
-      body: JSON.stringify({ title, description }),
+      body: JSON.stringify({ title, description, category }),
     });
     return mapGoalFromApi(response);
   }
@@ -165,6 +165,7 @@ interface GoalApiResponse {
   title: string;
   description?: string;
   type: string;
+  category: string;
   year: number;
   createdAt: string;
   months?: MonthApiResponse[];
@@ -208,6 +209,7 @@ function mapGoalFromApi(goal: GoalApiResponse): Goal {
     title: goal.title,
     description: goal.description,
     type: goal.type as GoalType,
+    category: goal.category as GoalCategory,
     year: goal.year,
     createdAt: goal.createdAt,
   };
